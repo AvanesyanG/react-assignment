@@ -1,0 +1,46 @@
+.card {
+    perspective: 1000px;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.cardInner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+.card.flipped .cardInner {
+    transform: rotateY(180deg);
+}
+
+.card.matched .cardBack {
+    background-color: #2ecc71;
+    opacity: 0.7;
+}
+
+.cardFront,
+.cardBack {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+.cardFront {
+    background-color: #3498db;
+}
+
+.cardBack {
+    background-color: #f1c40f;
+    transform: rotateY(180deg);
+}
