@@ -1,12 +1,8 @@
-import React from 'react';
 import styles from './DifficultySelector.module.css';
+import { DIFFICULTIES } from '../../constants/gameConstants';
 
 function DifficultySelector({ currentDifficulty, onChange }) {
-    const difficulties = [
-        { id: 'easy', label: 'Easy' },
-        { id: 'medium', label: 'Medium' },
-        { id: 'hard', label: 'Hard' },
-    ];
+    const difficulties = Object.values(DIFFICULTIES);
 
     return (
         <div className={styles.container}>

@@ -1,8 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
 import { initializeCards, getGridSize } from '../utils/gameUtils';
+import {useState} from "react";
 
 export const useGameLogic = (difficulty) => {
-    const [cards, setCards] = useState([]);
+    const [cards, setCards] = useState(() => initializeCards(difficulty));
     const [flippedCards, setFlippedCards] = useState([]);
     const [disabled, setDisabled] = useState(false);
     const [matchedPairs, setMatchedPairs] = useState(0);
@@ -13,19 +13,7 @@ export const useGameLogic = (difficulty) => {
 
     const gridSize = getGridSize(difficulty);
 
-    useEffect(() => {
-        resetGame();
-    }, [difficulty]);
-
-    const resetGame = useCallback(() => {
-        setCards(initializeCards(difficulty));
-        setFlippedCards([]);
-        setMatchedPairs(0);
-        setDisabled(false);
-        setStats({ attempts: 0, correctAttempts: 0 });
-    }, [difficulty]);
-
-    const handleCardClick = useCallback((clickedCard) => {
+    const handleCardClick = (clickedCard) => {
         if (disabled || clickedCard.isFlipped || clickedCard.isMatched) return;
 
         const newCards = cards.map(card =>
@@ -59,9 +47,9 @@ export const useGameLogic = (difficulty) => {
                 setFlippedCards([]);
                 setDisabled(false);
                 if (isMatch) setMatchedPairs(prev => prev + 1);
-            }, isMatch ? 500 : 500);
+            }, 500);
         }
-    }, [cards, disabled, flippedCards]);
+    };
 
     return {
         cards,
@@ -70,7 +58,6 @@ export const useGameLogic = (difficulty) => {
         disabled,
         flippedCards,
         matchedPairs,
-        stats,
-        resetGame
+        stats
     };
 };

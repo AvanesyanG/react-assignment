@@ -1,7 +1,7 @@
-import React from 'react';
 import { useGameLogic } from '../../hooks/useGameLogic';
 import Card from '../Card/Card';
 import styles from './GameBoard.module.css';
+import {useEffect} from "react";
 
 function GameBoard({ difficulty, onGameComplete }) {
     const {
@@ -14,7 +14,7 @@ function GameBoard({ difficulty, onGameComplete }) {
         stats
     } = useGameLogic(difficulty);
 
-    React.useEffect(() => {
+    useEffect(() => {
         const totalPairs = {
             easy: 8,
             medium: 18,

@@ -1,4 +1,3 @@
-import React from 'react';
 import styles from './GameStats.module.css';
 
 function GameStats({ stats, onPlayAgain }) {
