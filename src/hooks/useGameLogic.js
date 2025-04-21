@@ -25,9 +25,24 @@ export const useGameLogic = () => {
                 return player;
             });
 
+            const [player1, player2] = updatedPlayers;
+            let winner = null;
+
+            if (player1.matches !== player2.matches) {
+                winner = player1.matches > player2.matches ? 0 : 1;
+            } else if (player1.attempts !== player2.attempts) {
+                winner = player1.attempts < player2.attempts ? 0 : 1;
+            } else if (player1.time !== player2.time) {
+                winner = player1.time < player2.time ? 0 : 1;
+            }
+
             useGameStore.setState({
                 players: updatedPlayers,
-                currentTurnStart: null
+                currentTurnStart: null,
+                gameResult: {
+                    winner,
+                    isDraw: winner === null
+                }
             });
 
             setTimeout(() => {

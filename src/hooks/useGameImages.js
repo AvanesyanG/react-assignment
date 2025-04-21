@@ -8,7 +8,7 @@ const fetchImages = async (count) => {
     return response.json();
 };
 
-export const useGameImages = (difficulty) => {
+export const useGameImages = (difficulty, refreshCount = 0) => {
     const imageCount = {
         easy: 8,
         medium: 18,
@@ -16,7 +16,7 @@ export const useGameImages = (difficulty) => {
     }[difficulty];
 
     return useQuery({
-        queryKey: ['gameImages', imageCount],
+        queryKey: ['gameImages', imageCount, refreshCount],
         queryFn: () => fetchImages(imageCount),
         enabled: !!difficulty,
         staleTime: Infinity,

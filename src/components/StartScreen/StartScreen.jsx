@@ -3,7 +3,7 @@ import { useGameStore } from '../../store/store';
 import styles from './StartScreen.module.css';
 
 const StartScreen = () => {
-    const { players, setPlayers, setDifficulty, setGameStatus } = useGameStore();
+    const { players, setPlayers, setGameStatus } = useGameStore();
 
     const handleStart = () => {
         setGameStatus('rolling');

@@ -4,12 +4,15 @@ import styles from './CoinFlip.module.css';
 
 const CoinFlip = () => {
     const [isFlipping, setIsFlipping] = useState(false);
+    const [winner, setWinner] = useState(null);
     const { setGameStatus, setCurrentPlayer, players } = useGameStore();
 
     const handleFlip = () => {
         setIsFlipping(true);
+        const starter = Math.round(Math.random());
+        setWinner(starter);
+
         setTimeout(() => {
-            const starter = Math.round(Math.random());
             setCurrentPlayer(starter);
             setGameStatus('playing');
             setIsFlipping(false);
@@ -18,7 +21,7 @@ const CoinFlip = () => {
 
     return (
         <div className={styles.container}>
-            <div className={`${styles.coin} ${isFlipping ? styles.flip : ''}`}>
+            <div className={`${styles.coin} ${isFlipping ? (winner === 0 ? styles.flipPlayer1 : styles.flipPlayer2) : ''}`}>
                 <div
                     className={styles.front}
                     style={{ backgroundColor: players[0].color }}

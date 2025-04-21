@@ -26,8 +26,8 @@ export const useGameStore = create(persist(
         flippedCards: [],
         matchedPairs: 0,
         currentTurnStart: null,
+        gameResult: null,
 
-        // Actions
         setDifficulty: (difficulty) => set({ difficulty }),
         setPlayers: (players) => set({ players }),
 
@@ -61,12 +61,16 @@ export const useGameStore = create(persist(
                 matches: 0,
                 time: 0
             })),
-            currentTurnStart: Date.now()
+            currentTurnStart: Date.now(),
+            gameResult: null,
+            gameStatus: 'playing'
         }),
 
         flipCard: (cardId) => set(state => {
-            if (state.flippedCards.length >= 2 ||
-                state.cards.find(c => c.id === cardId)?.isMatched) {
+            if (
+                state.flippedCards.length >= 2 ||
+                state.cards.find(c => c.id === cardId)?.isMatched
+            ) {
                 return state;
             }
 
@@ -87,64 +91,66 @@ export const useGameStore = create(persist(
             const card2 = state.cards.find(c => c.id === id2);
             const isMatch = card1.value === card2.value;
 
-            set({
-                players: state.players.map((p, idx) =>
-                    idx === state.currentPlayer ? { ...p, attempts: p.attempts + 1 } : p
-                )
-            });
-
-            if (isMatch) {
-                set({
-                    matchedPairs: state.matchedPairs + 1,
-                    players: state.players.map((p, idx) =>
-                        idx === state.currentPlayer ? { ...p, matches: p.matches + 1 } : p
-                    ),
-                    cards: state.cards.map(card =>
-                        [id1, id2].includes(card.id) ? { ...card, isMatched: true } : card
-                    )
-                });
-            } else {
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                set({
-                    cards: state.cards.map(card =>
-                        [id1, id2].includes(card.id) ? { ...card, isFlipped: false } : card
-                    ),
-                });
-                state.setCurrentPlayer((state.currentPlayer + 1) % 2);
-            }
-
-            set({ flippedCards: [] });
-        },
-
-        quitGame: () => {
-            const state = get();
-            const now = Date.now();
-            const updatedPlayers = state.players.map((player, idx) => {
+            const updatedPlayers = state.players.map((p, idx) => {
                 if (idx === state.currentPlayer) {
                     return {
-                        ...player,
-                        time: player.time + (now - state.currentTurnStart)
+                        ...p,
+                        attempts: p.attempts + 1,
+                        matches: isMatch ? p.matches + 1 : p.matches
                     };
                 }
-                return player;
+                return p;
             });
 
+            if (!isMatch) {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+
             set({
-                gameStatus: 'setup',
+                players: updatedPlayers,
+                matchedPairs: isMatch ? state.matchedPairs + 1 : state.matchedPairs,
+                cards: state.cards.map(card => {
+                    if ([id1, id2].includes(card.id)) {
+                        return isMatch
+                            ? { ...card, isMatched: true }
+                            : { ...card, isFlipped: false };
+                    }
+                    return card;
+                }),
+                flippedCards: []
+            });
+
+            if (!isMatch) {
+                state.setCurrentPlayer((state.currentPlayer + 1) % 2);
+            }
+        },
+
+        resetGame: (newCards) => {
+            set({
+                gameStatus: 'playing',
                 currentPlayer: 0,
                 flippedCards: [],
                 matchedPairs: 0,
-                players: updatedPlayers.map(p => ({
-                    name: p.name,
-                    color: p.color,
+                players: get().players.map(p => ({
+                    ...p,
                     attempts: 0,
                     matches: 0,
                     time: 0
                 })),
-                cards: [],
-                currentTurnStart: null
+                cards: newCards,
+                currentTurnStart: Date.now(),
+                gameResult: null
             });
         },
+
+        quitGame: () => set({
+            gameStatus: 'setup',
+            cards: [],
+            flippedCards: [],
+            matchedPairs: 0,
+            currentTurnStart: null,
+            gameResult: null
+        }),
 
         setGameStatus: (status) => set({ gameStatus: status })
     }),

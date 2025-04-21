@@ -14,8 +14,12 @@
     transition: transform 1s ease-out;
 }
 
-.coin.flip {
+.coin.flipPlayer1 {
     transform: rotateY(1800deg);
+}
+
+.coin.flipPlayer2 {
+    transform: rotateY(1980deg);
 }
 
 .front, .back {
